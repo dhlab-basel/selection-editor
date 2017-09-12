@@ -1,46 +1,58 @@
-<div class="container">
+<div class="container" *ngIf="isLogged === false">
 
-    <div class="title">Salsah access</div>
+    <div class="box">
 
-    <div class="access">
-        <div class="row mb-3">
-            <div class="col-12">For some actions, Salsah may require your login and password. Please enter your credentials below.</div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-3">Login</label>
-            <div class="col-sm-9">
-                <input type="text" class="form-control" [(ngModel)]="login"/>
+        <div class="title">Salsah access</div>
+
+        <div class="access">
+            <div class="row mb-3">
+                <div class="col-12">Please login to Salsah before entering the page.</div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Login</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" [(ngModel)]="login"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Password</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" [(ngModel)]="password" (keydown.enter)="saveCredentials()"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="ml-sm-auto col-sm-9">
+                    <button type="button" class="btn btn-outline-secondary" (click)="saveCredentials()">Login</button>
+                </div>
             </div>
         </div>
-        <div class="form-group row">
-            <label class="col-sm-3">Password</label>
-            <div class="col-sm-9">
-                <input type="password" class="form-control" [(ngModel)]="password"/>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="ml-sm-auto col-sm-9">
-                <button type="button" class="btn btn-outline-secondary" (click)="getNodes()">Save</button>
-            </div>
-        </div>
+
     </div>
 
-    <div class="title">Pick selection</div>
+</div>
+
+<div class="container container-white" *ngIf="isLogged">
+
+    <div class="page-title">Pick selection</div>
 
     <div class="selection">
         <div class="mb-3">
             Choose your vocabulary and selection name below.
         </div>
-        <div class="input-group">
-            <input type="text" class="form-control" [(ngModel)]="vocabulary" (keyup)="getSelections()"/>
-            <select class="form-control" [(ngModel)]="selection">
-                <option *ngFor="let s of selections" value="{{ s.name }}">{{ s.name }}</option>
-            </select>
-            <button type="button" class="btn btn-outline-secondary" (click)="getNodes()">Search</button>
+        <div class="row form-group">
+            <div class="col-12 col-md-9 col-lg-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" [(ngModel)]="vocabulary" (keyup)="getSelections()"/>
+                    <select class="form-control" [(ngModel)]="selection">
+                        <option *ngFor="let s of selections" value="{{ s.name }}">{{ s.name }}</option>
+                    </select>
+                    <button type="button" class="btn btn-outline-secondary" (click)="getNodes()">Search</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="title">Selection nodes</div>
+    <div class="page-title mt-5">Selection nodes</div>
 
     <div class="page" *ngIf="nodes.length > 0">
 
@@ -68,8 +80,12 @@
                 <td>{{ node.label["fr"] }}</td>
                 <td>{{ node.label["it"] }}</td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-outline-warning" (click)="openNodeModal(node)">Edit</button>
-                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(node)">Delete</button>
+                    <button type="button" class="btn btn-sm btn-outline-warning" (click)="openNodeModal(node)">
+                        Edit
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(node)">
+                        Delete
+                    </button>
                 </td>
             </tr>
         </table>
@@ -90,34 +106,36 @@
         </button>
     </div>
     <div class="modal-body">
+        <div class="mb-3">Edit the selection node information below.</div>
         <div class="form-group row">
-            <label class="col-sm-3">DE</label>
+            <label class="col-form-label col-sm-3">German</label>
             <div class="col-sm-9">
                 <input type="text" class="form-control" [(ngModel)]="node.label['de']"/>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-3">EN</label>
+            <label class="col-form-label col-sm-3">English</label>
             <div class="col-sm-9">
                 <input type="text" class="form-control" [(ngModel)]="node.label['en']"/>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-3">FR</label>
+            <label class="col-form-label col-sm-3">French</label>
             <div class="col-sm-9">
                 <input type="text" class="form-control" [(ngModel)]="node.label['fr']"/>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-3">IT</label>
+            <label class="col-form-label col-sm-3">Italian</label>
             <div class="col-sm-9">
                 <input type="text" class="form-control" [(ngModel)]="node.label['it']"/>
             </div>
-        </div>    </div>
+        </div>
+    </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark" (click)="c('CANCEL')">Cancel</button>
-        <button type="button" class="btn btn-outline-dark" (click)="c('SAVE')" *ngIf="node.id > 0">Save</button>
-        <button type="button" class="btn btn-outline-dark" (click)="c('ADD')" *ngIf="node.id === undefined">Add</button>
+        <button type="button" class="btn btn-outline-success" (click)="c('SAVE')" *ngIf="node.id > 0">Save</button>
+        <button type="button" class="btn btn-outline-success" (click)="c('ADD')" *ngIf="node.id === undefined">Add</button>
     </div>
 </ng-template>
 
@@ -132,7 +150,7 @@
         {{ modalText }}
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-danger" (click)="c('Cancel')">Cancel</button>
+        <button type="button" class="btn btn-outline-dark" (click)="c('Done')">Done</button>
     </div>
 </ng-template>
 
@@ -147,7 +165,7 @@
         Are you sure that you would like to delete the selection node?
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)="c('NO')">No</button>
+        <button type="button" class="btn btn-outline-dark" (click)="c('NO')">No</button>
         <button type="button" class="btn btn-outline-danger" (click)="c('YES')">Yes</button>
     </div>
 </ng-template>

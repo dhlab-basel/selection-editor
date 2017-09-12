@@ -1,8 +1,27 @@
 .container {
-  max-width: 50rem;
+  margin: 2rem auto;
+  max-width: 75rem;
+  padding: 2rem;
 
-  .title {
+  &.container-white {
+    background-color: #FFF!important;
+  }
+
+  .page-title {
     font-size: 2rem;
-    margin: 2rem 0 1rem 0;
+    margin-bottom: 1rem;
+  }
+
+  .box {
+    width: 25rem;
+    margin: 5rem auto;
+    padding: 2rem;
+    background-color: #FFF;
+    border: 1px solid #EEE;
+
+    .title {
+      font-size: 2rem;
+      margin: 0 0 1rem 0;
+    }
   }
 }

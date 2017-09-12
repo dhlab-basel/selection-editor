@@ -1,5 +1,9 @@
 @import "assets/bootstrap.min.css";
 
+body {
+  background: rgb(250, 250, 250)!important;
+}
+
 .table-responsive td {
   white-space: nowrap;
   overflow: hidden;

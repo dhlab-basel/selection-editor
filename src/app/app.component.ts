@@ -20,6 +20,10 @@ export class AppComponent implements OnInit {
     modalTitle: string = "";
     modalText: string = "";
 
+    isLogged: boolean = false;
+    login: string = "";
+    password: string = "";
+
     vocabulary: string = "LIMC";
     selection: string = "article";
 
@@ -28,12 +32,31 @@ export class AppComponent implements OnInit {
 
     node: Node = new Node();
 
-    constructor(private apiService: ApiService, private modalService: NgbModal) {
+    constructor(private apiService: ApiService, private modalService: NgbModal) {}
 
-    }
+    ngOnInit() {}
 
-    ngOnInit() {
-        this.getSelections();
+    saveCredentials() {
+
+        this.apiService.credentials =  btoa(this.login + ":" + this.password);
+
+        this.apiService.getSelections(this.vocabulary).subscribe(
+            (result: SelectionData) => {
+                this.isLogged = true;
+                this.selections = result.selections;
+            },
+            (error: any) => {
+                this.selections = [];
+
+                this.isLogged = false;
+                this.password = "";
+
+                this.modalTitle = "Error";
+                this.modalText = "Your login or password is wrong. Please try again.";
+                this.modalService.open(this.infoModal);
+            }
+        );
+
     }
 
     getSelections() {
