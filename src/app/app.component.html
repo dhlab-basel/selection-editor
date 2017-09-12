@@ -1,0 +1,153 @@
+<div class="container">
+
+    <div class="title">Salsah access</div>
+
+    <div class="access">
+        <div class="row mb-3">
+            <div class="col-12">For some actions, Salsah may require your login and password. Please enter your credentials below.</div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3">Login</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" [(ngModel)]="login"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3">Password</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" [(ngModel)]="password"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="ml-sm-auto col-sm-9">
+                <button type="button" class="btn btn-outline-secondary" (click)="getNodes()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="title">Pick selection</div>
+
+    <div class="selection">
+        <div class="mb-3">
+            Choose your vocabulary and selection name below.
+        </div>
+        <div class="input-group">
+            <input type="text" class="form-control" [(ngModel)]="vocabulary" (keyup)="getSelections()"/>
+            <select class="form-control" [(ngModel)]="selection">
+                <option *ngFor="let s of selections" value="{{ s.name }}">{{ s.name }}</option>
+            </select>
+            <button type="button" class="btn btn-outline-secondary" (click)="getNodes()">Search</button>
+        </div>
+    </div>
+
+    <div class="title">Selection nodes</div>
+
+    <div class="page" *ngIf="nodes.length > 0">
+
+        <div class="mb-3">
+            Here you can edit the list of nodes in the defined selection.
+        </div>
+
+        <div class="mb-3">
+            <button type="button" class="btn btn-outline-success" (click)="openNodeModal()">Add new node</button>
+        </div>
+
+        <table class="table table-flat table-responsive">
+            <thead>
+            <tr>
+                <th>DE</th>
+                <th>EN</th>
+                <th>FR</th>
+                <th>IT</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tr *ngFor="let node of nodes">
+                <td>{{ node.label["de"] }}</td>
+                <td>{{ node.label["en"] }}</td>
+                <td>{{ node.label["fr"] }}</td>
+                <td>{{ node.label["it"] }}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-outline-warning" (click)="openNodeModal(node)">Edit</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(node)">Delete</button>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="page" *ngIf="nodes.length === 0">
+        No results yet.
+    </div>
+
+</div>
+
+<ng-template #nodeModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Selection node</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group row">
+            <label class="col-sm-3">DE</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" [(ngModel)]="node.label['de']"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3">EN</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" [(ngModel)]="node.label['en']"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3">FR</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" [(ngModel)]="node.label['fr']"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3">IT</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" [(ngModel)]="node.label['it']"/>
+            </div>
+        </div>    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="c('CANCEL')">Cancel</button>
+        <button type="button" class="btn btn-outline-dark" (click)="c('SAVE')" *ngIf="node.id > 0">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="c('ADD')" *ngIf="node.id === undefined">Add</button>
+    </div>
+</ng-template>
+
+<ng-template #infoModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalTitle }}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{ modalText }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="c('Cancel')">Cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #deleteModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Delete node</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        Are you sure that you would like to delete the selection node?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="c('NO')">No</button>
+        <button type="button" class="btn btn-outline-danger" (click)="c('YES')">Yes</button>
+    </div>
+</ng-template>

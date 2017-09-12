@@ -1,0 +1,15 @@
+@import "assets/bootstrap.min.css";
+
+.table-responsive td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table-flat td {
+  padding: 0.25rem 0.75rem;
+}
+
+.table-responsive {
+  table-layout: fixed;
+}
