@@ -1,15 +1,15 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { ApiService } from "./api.service";
 import { SelectionData } from "./selection-data";
 import { Selection } from "./selection";
 import { Node } from "./node";
 import { NodeData } from "./node-data";
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, ModalDismissReasons} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    selector: "app-root",
+    templateUrl: "./app.component.html",
+    styleUrls: ["./app.component.scss"]
 })
 export class AppComponent implements OnInit {
 
@@ -34,7 +34,12 @@ export class AppComponent implements OnInit {
 
     constructor(private apiService: ApiService, private modalService: NgbModal) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        // For debugging only
+        // this.login = "";
+        // this.password = "";
+        // this.saveCredentials();
+    }
 
     saveCredentials() {
 
@@ -74,11 +79,20 @@ export class AppComponent implements OnInit {
         this.apiService.getNodes(this.vocabulary, this.selection).subscribe(
             (result: NodeData) => {
                 this.nodes = result.selection;
+                this.sortNodes();
             },
             (error: any) => {
                 this.nodes = [];
             }
         );
+    }
+
+    sortNodes() {
+        this.nodes.sort((a: Node, b: Node): number => {
+            if (a.label["de"].toLowerCase() > b.label["de"].toLowerCase()) return 1;
+            if (a.label["de"].toLowerCase() < b.label["de"].toLowerCase()) return -1;
+            return 0;
+        });
     }
 
     openNodeModal(node?: Node) {
@@ -100,6 +114,7 @@ export class AppComponent implements OnInit {
                     this.editNode(node);
                     break;
                 case "ADD":
+                    this.node.generateName();
                     this.addNode(node);
                     break;
                 default:
@@ -116,30 +131,100 @@ export class AppComponent implements OnInit {
         }, (reason) => {
             console.log(`Dismissed ${(reason)}`);
         });
+
     }
 
     addNode(node: Node) {
 
+        // Add note
+        this.apiService.postNode(this.vocabulary, this.selection, node).subscribe(
+            (success: boolean) => {
+                if (success) this.addNodeSuccess(node);
+                else this.addNodeError();
+            },
+            (success: boolean) => {
+                this.addNodeError();
+            }
+        );
+
+    }
+
+    addNodeSuccess(node: Node) {
+
         // Add node to the array
         this.nodes.push(node);
-        this.nodes.sort((a: Node, b: Node): number => {
-            if (a.label["de"].toLowerCase() > b.label["de"].toLowerCase()) return 1;
-            if (a.label["de"].toLowerCase() < b.label["de"].toLowerCase()) return -1;
-            return 0;
-        });
+        this.sortNodes();
+
+        //this.modalTitle = "Success";
+        //this.modalText = "The node has been successfully added.";
+        //this.modalService.open(this.infoModal);
+
+    }
+
+    addNodeError() {
+        this.modalTitle = "Error";
+        this.modalText = "The node could not be added.";
+        this.modalService.open(this.infoModal);
     }
 
     editNode(node: Node) {
-        console.log("NODE EDITED");
+
+        // Edit note
+        this.apiService.putNode(this.vocabulary, this.selection, node).subscribe(
+            (success: boolean) => {
+                if (success) this.editNodeSuccess();
+                else this.editNodeError();
+            },
+            (success: boolean) => {
+                this.editNodeError();
+            }
+        );
+
+    }
+
+    editNodeSuccess() {
+        //this.modalTitle = "Success";
+        //this.modalText = "The node has been successfully edited.";
+        //this.modalService.open(this.infoModal);
+    }
+
+    editNodeError() {
+        this.modalTitle = "Error";
+        this.modalText = "The node could not be edited.";
+        this.modalService.open(this.infoModal);
     }
 
     deleteNode(node: Node) {
-        console.log("NODE DELETED");
+
+        // Delete note
+        this.apiService.deleteNode(this.vocabulary, this.selection, node).subscribe(
+            (success: boolean) => {
+                if (success) this.deleteNodeSuccess(node);
+                else this.deleteNodeError();
+            },
+            (success: boolean) => {
+                this.deleteNodeError();
+            }
+        );
+
+    }
+
+    deleteNodeSuccess(node: Node) {
 
         // Remove node from the array
         const index: number = this.nodes.indexOf(node);
         if (index >= 0) this.nodes.splice(index, 1);
 
+        //this.modalTitle = "Success";
+        //this.modalText = "The node has been successfully deleted.";
+        //this.modalService.open(this.infoModal);
+
+    }
+
+    deleteNodeError() {
+        this.modalTitle = "Error";
+        this.modalText = "The node could not be deleted.";
+        this.modalService.open(this.infoModal);
     }
 
 }

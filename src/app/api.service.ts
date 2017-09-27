@@ -63,21 +63,71 @@ export class ApiService {
 
     }
 
-    postNode(node: Node) {
+    postNode(vocabulary: string, selection: string, node: Node) {
 
         const headers = new HttpHeaders({"Authorization": "Basic " + this.credentials});
+
+        return this.httpClient.post("http://www.salsah.org/api/selections/" + vocabulary + ":" + selection + "/" + node.name, {
+            position: {
+                leftOf: null,
+                rightOf: null
+            },
+            labels: {
+                de: node.label["de"],
+                en: node.label["en"],
+                fr: node.label["fr"],
+                it: node.label["it"]
+            }
+        }, {
+            headers: headers,
+            observe: "response"
+        }).map((response: HttpResponse<any>) => {
+            if (response.status === 200) {
+                node.id = response.body.node_id;
+                return true;
+            }
+            return false;
+        }).catch((error: any): any => {
+            return false;
+        });
 
     }
 
-    putNode(node: Node) {
+    putNode(vocabulary: string, selection: string, node: Node): Observable<boolean> {
 
         const headers = new HttpHeaders({"Authorization": "Basic " + this.credentials});
+
+        return this.httpClient.put("http://www.salsah.org/api/selections/" + vocabulary + ":" + selection + "/" + node.name, {
+            labels: {
+                de: node.label["de"],
+                en: node.label["en"],
+                fr: node.label["fr"],
+                it: node.label["it"]
+            }
+        }, {
+            headers: headers,
+            observe: "response"
+        }).map((response: HttpResponse<any>) => {
+            return response.status === 200;
+        }).catch((error: any): any => {
+            return false;
+        });
 
     }
 
-    deleteNode(node: Node) {
+    deleteNode(vocabulary: string, selection: string, node: Node) {
+
 
         const headers = new HttpHeaders({"Authorization": "Basic " + this.credentials});
+
+        return this.httpClient.delete("http://www.salsah.org/api/selections/" + vocabulary + ":" + selection + "/" + node.name, {
+            headers: headers,
+            observe: "response"
+        }).map((response: HttpResponse<any>) => {
+            return response.status === 200;
+        }).catch((error: any): any => {
+            return false;
+        });
 
     }
 
