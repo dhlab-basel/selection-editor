@@ -1,10 +1,14 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { HttpErrorResponse } from "@angular/common/http";
+
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+
 import { ApiService } from "./api.service";
+
 import { SelectionData } from "./selection-data";
 import { Selection } from "./selection";
 import { Node } from "./node";
 import { NodeData } from "./node-data";
-import {NgbModal, ModalDismissReasons} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
     selector: "app-root",
@@ -20,7 +24,7 @@ export class AppComponent implements OnInit {
     modalTitle: string = "";
     modalText: string = "";
 
-    isLogged: boolean = false;
+    isLogged: boolean = true;
     login: string = "";
     password: string = "";
 
@@ -35,10 +39,13 @@ export class AppComponent implements OnInit {
     constructor(private apiService: ApiService, private modalService: NgbModal) {}
 
     ngOnInit() {
+
         // For debugging only
-        // this.login = "";
-        // this.password = "";
-        // this.saveCredentials();
+        //this.login = "";
+        //this.password = "";
+
+        this.saveCredentials();
+
     }
 
     saveCredentials() {
@@ -50,7 +57,10 @@ export class AppComponent implements OnInit {
                 this.isLogged = true;
                 this.selections = result.selections;
             },
-            (error: any) => {
+            (error: HttpErrorResponse) => {
+
+                //if (error.status === 0) return;
+
                 this.selections = [];
 
                 this.isLogged = false;
@@ -59,6 +69,7 @@ export class AppComponent implements OnInit {
                 this.modalTitle = "Error";
                 this.modalText = "Your login or password is wrong. Please try again.";
                 this.modalService.open(this.infoModal);
+
             }
         );
 
@@ -67,6 +78,7 @@ export class AppComponent implements OnInit {
     getSelections() {
         this.apiService.getSelections(this.vocabulary).subscribe(
             (result: SelectionData) => {
+                console.log("HERE");
                 this.selections = result.selections;
             },
             (error: any) => {
@@ -142,7 +154,7 @@ export class AppComponent implements OnInit {
                 if (success) this.addNodeSuccess(node);
                 else this.addNodeError();
             },
-            (success: boolean) => {
+            (error: any) => {
                 this.addNodeError();
             }
         );
@@ -175,7 +187,7 @@ export class AppComponent implements OnInit {
                 if (success) this.editNodeSuccess();
                 else this.editNodeError();
             },
-            (success: boolean) => {
+            (error: any) => {
                 this.editNodeError();
             }
         );
@@ -202,7 +214,7 @@ export class AppComponent implements OnInit {
                 if (success) this.deleteNodeSuccess(node);
                 else this.deleteNodeError();
             },
-            (success: boolean) => {
+            (error: any) => {
                 this.deleteNodeError();
             }
         );
