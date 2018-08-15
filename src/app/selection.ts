@@ -13,7 +13,7 @@ export class Selection {
     @JsonProperty("label", String)
     label: string = undefined;
 
-    @JsonProperty("description", String)
+    @JsonProperty("description", String, true)
     description: string = undefined;
 
     @JsonProperty("vocabulary_id", NumberStringConverter)
