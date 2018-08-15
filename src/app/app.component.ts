@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
     modalTitle: string = "";
     modalText: string = "";
 
-    isLogged: boolean = true;
+    isLogged: boolean = false;
     login: string = "";
     password: string = "";
 
@@ -43,8 +43,7 @@ export class AppComponent implements OnInit {
         // For debugging only
         //this.login = "";
         //this.password = "";
-
-        this.saveCredentials();
+        //this.saveCredentials();
 
     }
 
